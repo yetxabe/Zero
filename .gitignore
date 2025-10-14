@@ -1,0 +1,92 @@
+
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+
+# === BACKEND (.NET Core) ===
+
+## Build results
+bin/
+obj/
+
+## User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Logs
+*.log
+
+## Rider
+.idea/
+
+## Visual Studio
+.vscode/
+.vs/
+
+## NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuget.props
+project.lock.json
+
+# Dotnet watch
+.dotnet/
+
+# User secrets
+secrets.json
+*.secret.json
+
+# Environment files
+.env
+.env.*
+
+# ASP.NET temp files
+wwwroot/static/
+
+# EF Core Migrations metadata
+Migrations/*.Designer.cs
+Migrations/*Snapshot.cs
+
+---
+
+# === FRONTEND (React + Vite/Cra) ===
+
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# OS system files
+.DS_Store
+Thumbs.db
+
+---
+
+# === GLOBAL ===
+
+# Optional backup or temp files
+*.bak
+*.tmp
+*.swp
+*.swo
+
+
+appsettings.*
