@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Zero.Api.Models.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -17,19 +18,21 @@ public class JwtOptions
 
 public interface IJwtTokenService
 {
-    (string Token, DateTime ExpiresAtUtc) CreateAccessToken(AppUser user);
+    Task<(string Token, DateTime ExpiresAtUtc)> CreateAccessTokenAsync(AppUser user);
 }
 
 public class JwtTokenService : IJwtTokenService
 {
     private readonly JwtOptions _options;
+    private readonly UserManager<AppUser> _userManager;
 
-    public JwtTokenService(IOptions<JwtOptions> options)
+    public JwtTokenService(IOptions<JwtOptions> options, UserManager<AppUser> userManager)
     {
         _options = options.Value;
+        _userManager = userManager;
     }
 
-    public (string Token, DateTime ExpiresAtUtc) CreateAccessToken(AppUser user)
+    public async Task<(string Token, DateTime ExpiresAtUtc)> CreateAccessTokenAsync(AppUser user)
     {
         var expires = DateTime.UtcNow.AddMinutes(_options.ExpiresInMinutes);
 
@@ -42,6 +45,9 @@ public class JwtTokenService : IJwtTokenService
             new("lastName", user.LastName),
             new("izaroCode", user.IzaroCode)
         };
+        
+        var roles = await _userManager.GetRolesAsync(user);
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
         
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

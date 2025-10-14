@@ -91,12 +91,44 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontCors", p =>
-        p.WithOrigins("http://localhost:3000")
+        p.WithOrigins("https://localhost:7291")
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowAnyHeader()
+            .AllowCredentials());
 });
 
 var app = builder.Build();
+
+async Task SeedAsync(IApplicationBuilder app)
+{
+    using var scope = app.ApplicationServices.CreateScope();
+    var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+
+    const string adminRole = "Admin";
+    if (!await roleMgr.RoleExistsAsync(adminRole))
+        await roleMgr.CreateAsync(new IdentityRole(adminRole));
+
+    var adminEmail = "informatica@moyua.eus";
+    var admin = await userMgr.FindByEmailAsync(adminEmail);
+    if (admin is null)
+    {
+        admin = new AppUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            FirstName = "Informatica",
+            LastName = "Moyua",
+            IzaroCode = "IZ-ADMIN"
+        };
+        var created = await userMgr.CreateAsync(admin, "Admin1234!");
+        if (created.Succeeded)
+            await userMgr.AddToRoleAsync(admin, adminRole);
+    }
+}
+
+// Llama a la semilla (puedes limitarla a Development si quieres)
+await SeedAsync(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
