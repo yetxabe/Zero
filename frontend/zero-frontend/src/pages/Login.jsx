@@ -46,8 +46,8 @@ export default function Login() {
                 {/* Columna izquierda: formulario */}
                 <div className="p-6 md:p-10">
                     <div className="mb-6">
-                        <h1 className="text-2xl font-semibold">Welcome back</h1>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">Login to your account</p>
+                        <h1 className="text-2xl font-semibold">Bienvenido</h1>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">Accede con tu cuenta</p>
                     </div>
 
 
@@ -68,14 +68,14 @@ export default function Login() {
 
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <Label htmlFor="password">Password</Label>
-                                <button
+                                <Label htmlFor="password">Contraseña</Label>
+                                {/*<button
                                     type="button"
                                     className="text-xs text-slate-600 dark:text-slate-300 hover:underline"
                                     onClick={() => navigate('/forgot-password')}
                                 >
                                     Forgot your password?
-                                </button>
+                                </button>*/}
                             </div>
                             <div className="relative">
                                 <Input
@@ -101,13 +101,13 @@ export default function Login() {
 
 
                         <Button type="submit" disabled={loading} className="w-full h-10">
-                            {loading ? 'Logging in…' : 'Login'}
+                            {loading ? 'Accediendo...' : 'Login'}
                         </Button>
 
 
-                        <div className="pt-2 text-xs text-slate-500 dark:text-slate-400">
+                        {/*<div className="pt-2 text-xs text-slate-500 dark:text-slate-400">
                             By clicking continue, you agree to our <a className="underline underline-offset-2" href="#">Terms of Service</a> and <a className="underline underline-offset-2" href="#">Privacy Policy</a>.
-                        </div>
+                        </div>*/}
                     </form>
                 </div>
 
@@ -126,9 +126,9 @@ export default function Login() {
                     <div className="absolute inset-0 grid place-items-center">
                         {/* Sustituye /logo.png por tu ruta real o import */}
                         <motion.img
-                            src="/logo.png"
+                            src="./img/LogoGrupoMoyua.jpg"
                             alt="Company logo"
-                            className="max-h-40 w-auto drop-shadow-sm"
+                            className="h-full w-full drop-shadow-sm"
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ duration: 0.5 }}
