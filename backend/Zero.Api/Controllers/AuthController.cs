@@ -49,7 +49,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { errors = result.Errors.Select(e => e.Description) });
         
         var (token, exp) = await _jwt.CreateAccessTokenAsync(user);
-        return Ok(new AuthResponseDto(token, exp));
+        return Ok();
     }
     
     [HttpPost("login")]
