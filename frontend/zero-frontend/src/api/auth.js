@@ -15,8 +15,3 @@ export const register = async({email, password, firstName, lastName, izaroCode})
     });
     return data;
 };
-
-export const me = async() => {
-    const {data} = await api.get('/auth/me');
-    return data;
-}

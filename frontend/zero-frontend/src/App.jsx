@@ -40,7 +40,7 @@ export default function App(){
                         </RequireRole>
                     </RequireAuth>
                 } />
-                <Route path="/admin/users/edit" element={
+                <Route path="/admin/users/edit/:id" element={
                     <RequireAuth>
                         <RequireRole roles={["Admin"]}>
                             <UserEdit />

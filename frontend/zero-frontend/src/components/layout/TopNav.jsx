@@ -14,7 +14,6 @@ const NAV_ITEMS = [
         children: [
             { label: 'Añadir usuario', to: '/admin/users/new' },
             { label: 'Listar usuarios', to: '/admin/users' },
-            { label: 'Editar usuario', to: '/admin/users/edit' },
             { label: 'Añadir roles', to: '/admin/roles/new' },
             { label: 'Asignar roles', to: '/admin/roles/assign' },
         ],

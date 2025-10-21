@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { extractEmailFromJwtPayload, extractRolesFromJwtPayload} from "../helpers/claims.js";
-import { me } from "../api/auth";
 
 const AuthContext = createContext(null);
 
