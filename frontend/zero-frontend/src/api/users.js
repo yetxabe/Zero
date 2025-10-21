@@ -9,6 +9,13 @@ export const getUsers = async ({ page = 1, pageSize = 20, search = '', role = ''
     return data; // PagedResult
 };
 
+export const createUser = async (dto) => {
+    // POST /api/admin/users
+    // dto = { email, password, firstName, lastName, izaroCode, phoneNumber?, emailConfirmed?, roles? }
+    const res = await api.post('/admin/users', dto);
+    return res.data; // puede devolver UserListItemDto o { message }
+};
+
 export const getUserById = async (id) => {
     const { data } = await api.get(`/admin/users/${id}`);
     return data; // { id, email, firstName, lastName, roles: [] }

@@ -80,6 +80,40 @@ public class AdminController : ControllerBase
         return Ok(new PagedResult<UserListItemDto>(page, pageSize, total, items));
     }
 
+    [HttpPost("users")]
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
+    {
+        var existing = await _userManager.FindByEmailAsync(dto.Email);
+        if (existing is not null)
+            return Conflict(new { message = "El email ya está en uso por otro usuario." });
+
+        var user = new AppUser
+        {
+            UserName = dto.Email,
+            Email = dto.Email,
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            IzaroCode = dto.IzaroCode
+        };
+
+        var createResult = await _userManager.CreateAsync(user, dto.Password);
+        if (!createResult.Succeeded)
+            return BadRequest(new { errors = createResult.Errors.Select(e => e.Description) });
+
+        
+
+        var finalRoles = await _userManager.GetRolesAsync(user);
+
+        return CreatedAtAction(nameof(GetUserById), new { userId = user.Id }, new UserListItemDto(
+            user.Id,
+            user.Email ?? "",
+            user.FirstName,
+            user.LastName,
+            user.IzaroCode,
+            finalRoles
+        ));
+    }
+    
     [HttpGet("users/{userId}")]
     public async Task<IActionResult> GetUserById(string userId)
     {
