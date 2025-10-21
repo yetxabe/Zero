@@ -6,16 +6,20 @@ import { useAuth } from '../../context/AuthContext';
 
 // Menú principal (centrado). "children" genera submenú.
 const NAV_ITEMS = [
-    { label: 'Features', to: '/' },
-    { label: 'Dashboard', to: '/dashboard' },
     {
         label: 'Admin',
         roles: ['Admin'],
         children: [
-            { label: 'Añadir usuario', to: '/admin/users/new' },
             { label: 'Listar usuarios', to: '/admin/users' },
             { label: 'Añadir roles', to: '/admin/roles/new' },
             { label: 'Asignar roles', to: '/admin/roles/assign' },
+        ],
+    },
+    {
+        label: 'Instalaciones',
+        roles: ['Admin', 'Instalaciones'],
+        children: [
+            { label: 'Listar instalaciones', to: '/installations' },
         ],
     },
 ];
