@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zero.Api.Data;
 
@@ -11,9 +12,11 @@ using Zero.Api.Data;
 namespace Zero.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251022070215_AddFormsDB")]
+    partial class AddFormsDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,7 +289,7 @@ namespace Zero.Api.Migrations
                     b.Property<int>("FormFieldTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FormSectionId")
+                    b.Property<int>("FormId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -297,7 +300,7 @@ namespace Zero.Api.Migrations
 
                     b.HasIndex("FormFieldTypeId");
 
-                    b.HasIndex("FormSectionId");
+                    b.HasIndex("FormId");
 
                     b.ToTable("Fields", "Form");
                 });
@@ -339,28 +342,6 @@ namespace Zero.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FieldTypes", "Form");
-                });
-
-            modelBuilder.Entity("Zero.Api.Models.Form.FormSection", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("FormId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormId");
-
-                    b.ToTable("Sections", "Form");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -433,15 +414,15 @@ namespace Zero.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Zero.Api.Models.Form.FormSection", "FormSection")
-                        .WithMany("Fields")
-                        .HasForeignKey("FormSectionId")
+                    b.HasOne("Zero.Api.Models.Form.Form", "Form")
+                        .WithMany()
+                        .HasForeignKey("FormId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("FormFieldType");
+                    b.Navigation("Form");
 
-                    b.Navigation("FormSection");
+                    b.Navigation("FormFieldType");
                 });
 
             modelBuilder.Entity("Zero.Api.Models.Form.FormFieldOptions", b =>
@@ -455,22 +436,6 @@ namespace Zero.Api.Migrations
                     b.Navigation("FormField");
                 });
 
-            modelBuilder.Entity("Zero.Api.Models.Form.FormSection", b =>
-                {
-                    b.HasOne("Zero.Api.Models.Form.Form", "Form")
-                        .WithMany("Sections")
-                        .HasForeignKey("FormId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Form");
-                });
-
-            modelBuilder.Entity("Zero.Api.Models.Form.Form", b =>
-                {
-                    b.Navigation("Sections");
-                });
-
             modelBuilder.Entity("Zero.Api.Models.Form.FormCategory", b =>
                 {
                     b.Navigation("Forms");
@@ -479,11 +444,6 @@ namespace Zero.Api.Migrations
             modelBuilder.Entity("Zero.Api.Models.Form.FormField", b =>
                 {
                     b.Navigation("FormFieldOptions");
-                });
-
-            modelBuilder.Entity("Zero.Api.Models.Form.FormSection", b =>
-                {
-                    b.Navigation("Fields");
                 });
 #pragma warning restore 612, 618
         }
