@@ -11,6 +11,7 @@ const NAV_ITEMS = [
         roles: ['Admin'],
         children: [
             { label: 'Listar usuarios', to: '/admin/users' },
+            { label: 'Listar formularios', to: '/admin/forms' },
             { label: 'Añadir roles', to: '/admin/roles/new' },
             { label: 'Asignar roles', to: '/admin/roles/assign' },
         ],

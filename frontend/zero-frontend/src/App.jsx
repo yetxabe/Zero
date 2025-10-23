@@ -10,6 +10,8 @@ import UserCreate from './pages/admin/UserCreate';
 import UserEdit from './pages/admin/UserEdit';
 import RolesCreate from './pages/admin/RolesCreate';
 import RolesAssign from './pages/admin/RolesAssign';
+import FormsList from './pages/admin/FormsList';
+import FormCreate from './pages/admin/FormCreate';
 
 export default function App(){
     return (
@@ -44,6 +46,20 @@ export default function App(){
                     <RequireAuth>
                         <RequireRole roles={["Admin"]}>
                             <UserEdit />
+                        </RequireRole>
+                    </RequireAuth>
+                } />
+                <Route path={"/admin/forms"} element={
+                    <RequireAuth>
+                        <RequireRole roles={["Admin"]}>
+                            <FormsList />
+                        </RequireRole>
+                    </RequireAuth>
+                } />
+                <Route path={"/admin/forms/new"} element={
+                    <RequireAuth>
+                        <RequireRole roles={["Admin"]}>
+                            <FormCreate />
                         </RequireRole>
                     </RequireAuth>
                 } />
