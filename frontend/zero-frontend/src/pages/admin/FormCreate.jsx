@@ -29,17 +29,14 @@ const TYPES_WITH_OPTIONS = new Set(["select", "radio", "checkbox"]);
 
 // Fallbacks si aún no expones catálogos
 const FALLBACK_TYPES = [
-    { id: 1, name: "text" },
-    { id: 2, name: "number" },
-    { id: 3, name: "textarea" },
-    { id: 4, name: "select" },
-    { id: 5, name: "radio" },
-    { id: 6, name: "checkbox" },
+    { id: 1, name: "checkbox" },
+    { id: 2, name: "radio" },
+    { id: 3, name: "true-false" },
+    { id: 4, name: "textarea" },
+    { id: 5, name: "firma" },
 ];
 const FALLBACK_CATEGORIES = [
-    { id: 1, name: "General" },
-    { id: 2, name: "RRHH" },
-    { id: 3, name: "IT" },
+    { id: 1, name: "Instalaciones" },
 ];
 
 export default function FormCreate() {
@@ -253,7 +250,7 @@ export default function FormCreate() {
 
         setLoading(true);
         try {
-            await api.post("/api/Form/create-form", dto);
+            await api.post("/Form/forms", dto);
             setSuccess("Formulario creado correctamente.");
             setTimeout(() => navigate("/forms"), 900);
         } catch (err) {

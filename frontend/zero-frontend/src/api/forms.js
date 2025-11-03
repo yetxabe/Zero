@@ -9,7 +9,7 @@ export async function getForms({ page=1, pageSize=20, search='', category='' } =
         return data;
     } catch {
         // Fallback a un array simple
-        const { data } = await api.get('/api/forms');
+        const { data } = await api.get('/forms');
         return data;
     }
 }

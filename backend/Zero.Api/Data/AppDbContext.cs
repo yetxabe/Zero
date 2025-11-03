@@ -20,8 +20,40 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<FormFieldType> FormFieldTypes { get; set; }
     public DbSet<FormSection> FormSections { get; set; }
     
+    public DbSet<FormResponse> FormResponses { get; set; }
+    public DbSet<FormResponseItem> FormResponseItems { get; set; }
+    public DbSet<FormResponseItemOption> FormResponseItemOptions { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<FormResponse>()
+            .HasOne(r => r.Form)
+            .WithMany()
+            .HasForeignKey(r => r.FormId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.Entity<FormResponseItem>()
+            .HasOne(r => r.FormResponse)
+            .WithMany(r => r.Items)
+            .HasForeignKey(r => r.FormResponseId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<FormResponseItem>()
+            .HasOne(r => r.FormField)
+            .WithMany()
+            .HasForeignKey(r => r.FormFieldId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Entity<FormResponseItemOption>()
+            .HasOne(o => o.FormResponseItem)
+            .WithMany(i => i.selectedOptions)
+            .HasForeignKey(o => o.FormResponseItemId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<FormResponseItemOption>()
+            .HasOne(o => o.FormFieldOption)
+            .WithMany() // no necesitas navegación inversa
+            .HasForeignKey(o => o.FormFieldOptionId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
         base.OnModelCreating(builder);
 
         // Esquema auth
@@ -43,5 +75,9 @@ public class AppDbContext : IdentityDbContext<AppUser>
         builder.Entity<FormFieldOptions>().ToTable("FieldOptions", schema);
         builder.Entity<FormFieldType>().ToTable("FieldTypes", schema);
         builder.Entity<FormSection>().ToTable("Sections", schema);
+        builder.Entity<FormResponse>().ToTable("Responses", schema);
+        builder.Entity<FormResponseItem>().ToTable("ResponseItems", schema);
+        builder.Entity<FormResponseItemOption>().ToTable("ResponseItemOptions", schema);
+        
     }
 }

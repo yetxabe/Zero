@@ -70,7 +70,7 @@ export default function FormsList(){
                             <tr className="text-left border-b">
                                 <th className="py-2 pr-4">Nombre</th>
                                 <th className="py-2 pr-4">Categoría</th>
-                                <th className="py-2 pr-4">Campos</th>
+                                <th className="py-2 pr-4">Secciones</th>
                                 <th className="py-2 pr-4">Acciones</th>
                             </tr>
                             </thead>
@@ -78,8 +78,8 @@ export default function FormsList(){
                             {data.items.map(f => (
                                 <tr key={f.id} className="border-b last:border-b-0">
                                     <td className="py-2 pr-4">{f.name}</td>
-                                    <td className="py-2 pr-4">{f.categoryName ?? f.categoryId ?? '-'}</td>
-                                    <td className="py-2 pr-4">{f.fieldsCount ?? (Array.isArray(f.fields) ? f.fields.length : '-')}</td>
+                                    <td className="py-2 pr-4">{f.category ?? f.categoryId ?? '-'}</td>
+                                    <td className="py-2 pr-4">{f.sections ?? (Array.isArray(f.fields) ? f.fields.length : '-')}</td>
                                     <td className="py-2 pr-4">
                                         <div className="flex gap-2">
                                             <Button variant="secondary" asChild>
