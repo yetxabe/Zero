@@ -7,4 +7,6 @@ public class Form
     public int CategoryId { get; set; }
     public FormCategory Category { get; set; }
     public ICollection<FormSection> Sections { get; set; }
+    
+    public ICollection<FormResponse> Responses { get; set; } = new List<FormResponse>();
 }

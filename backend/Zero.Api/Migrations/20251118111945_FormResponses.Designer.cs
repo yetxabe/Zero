@@ -12,8 +12,8 @@ using Zero.Api.Data;
 namespace Zero.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251103090350_AddFormResponseTables")]
-    partial class AddFormResponseTables
+    [Migration("20251118111945_FormResponses")]
+    partial class FormResponses
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -346,29 +346,38 @@ namespace Zero.Api.Migrations
 
             modelBuilder.Entity("Zero.Api.Models.Form.FormResponse", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<int>("FormId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("FormId1")
+                        .HasColumnType("int");
+
                     b.Property<string>("Obra")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FormId");
 
+                    b.HasIndex("FormId1");
+
                     b.ToTable("Responses", "Form");
                 });
 
-            modelBuilder.Entity("Zero.Api.Models.Form.FormResponseItem", b =>
+            modelBuilder.Entity("Zero.Api.Models.Form.FormResponseField", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -379,9 +388,11 @@ namespace Zero.Api.Migrations
                     b.Property<int>("FormFieldId")
                         .HasColumnType("int");
 
-                    b.Property<string>("FormResponseId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("FormFieldOptionId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("FormResponseId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -390,32 +401,11 @@ namespace Zero.Api.Migrations
 
                     b.HasIndex("FormFieldId");
 
+                    b.HasIndex("FormFieldOptionId");
+
                     b.HasIndex("FormResponseId");
 
                     b.ToTable("ResponseItems", "Form");
-                });
-
-            modelBuilder.Entity("Zero.Api.Models.Form.FormResponseItemOption", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("FormFieldOptionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FormResponseItemId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FormFieldOptionId");
-
-                    b.HasIndex("FormResponseItemId");
-
-                    b.ToTable("ResponseItemOptions", "Form");
                 });
 
             modelBuilder.Entity("Zero.Api.Models.Form.FormSection", b =>
@@ -540,10 +530,14 @@ namespace Zero.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Zero.Api.Models.Form.Form", null)
+                        .WithMany("Responses")
+                        .HasForeignKey("FormId1");
+
                     b.Navigation("Form");
                 });
 
-            modelBuilder.Entity("Zero.Api.Models.Form.FormResponseItem", b =>
+            modelBuilder.Entity("Zero.Api.Models.Form.FormResponseField", b =>
                 {
                     b.HasOne("Zero.Api.Models.Form.FormField", "FormField")
                         .WithMany()
@@ -551,34 +545,22 @@ namespace Zero.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Zero.Api.Models.Form.FormFieldOptions", "FormFieldOption")
+                        .WithMany()
+                        .HasForeignKey("FormFieldOptionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Zero.Api.Models.Form.FormResponse", "FormResponse")
-                        .WithMany("Items")
+                        .WithMany("Fields")
                         .HasForeignKey("FormResponseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("FormField");
 
-                    b.Navigation("FormResponse");
-                });
-
-            modelBuilder.Entity("Zero.Api.Models.Form.FormResponseItemOption", b =>
-                {
-                    b.HasOne("Zero.Api.Models.Form.FormFieldOptions", "FormFieldOption")
-                        .WithMany()
-                        .HasForeignKey("FormFieldOptionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Zero.Api.Models.Form.FormResponseItem", "FormResponseItem")
-                        .WithMany("selectedOptions")
-                        .HasForeignKey("FormResponseItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("FormFieldOption");
 
-                    b.Navigation("FormResponseItem");
+                    b.Navigation("FormResponse");
                 });
 
             modelBuilder.Entity("Zero.Api.Models.Form.FormSection", b =>
@@ -594,6 +576,8 @@ namespace Zero.Api.Migrations
 
             modelBuilder.Entity("Zero.Api.Models.Form.Form", b =>
                 {
+                    b.Navigation("Responses");
+
                     b.Navigation("Sections");
                 });
 
@@ -609,12 +593,7 @@ namespace Zero.Api.Migrations
 
             modelBuilder.Entity("Zero.Api.Models.Form.FormResponse", b =>
                 {
-                    b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("Zero.Api.Models.Form.FormResponseItem", b =>
-                {
-                    b.Navigation("selectedOptions");
+                    b.Navigation("Fields");
                 });
 
             modelBuilder.Entity("Zero.Api.Models.Form.FormSection", b =>

@@ -273,4 +273,50 @@ public class FormController : ControllerBase
             }
         });
     }
+
+    [HttpPost("{formId:int}/responses")]
+    [Authorize(Roles = "Instalaciones")]
+    public async Task<IActionResult> CreateResponse(int formId, [FromBody] CreateFormResponseDto dto)
+    {
+        //Comprobar que el formulario existe
+        var form = await _db.Forms
+            .Include(f => f.Category)
+            .FirstOrDefaultAsync(f => f.Id == formId);
+        if (form == null)
+            return NotFound(new { message = $"Formulario {formId} no encontrado." });
+        
+        //Validar que los formfields enviados pertenezcan al formulario
+        var fieldIds = dto.Answers.Select(a => a.FormFieldId).ToList();
+        var validFields = await _db.FormFields
+                .Include(ff => ff.FormSection)
+            .Where(ff => ff.FormSection.FormId == formId && fieldIds.Contains(ff.Id))
+            .Select(ff => ff.Id)
+            .ToListAsync();
+        if(validFields.Count != fieldIds.Distinct().Count())
+            return BadRequest(new {message = "Hay campos que no pertenecen a este formulario."});
+        
+        // Obtener el usuario que responde
+        var createdBy = User?.Identity?.IsAuthenticated == true
+            ? User.Identity!.Name ?? "unknown"
+            : "anonymous";
+        
+        // Crear la entidad FormResponse
+        var response = new FormResponse
+        {
+            FormId = formId,
+            CreatedBy = createdBy,
+            CreatedAt = DateTime.UtcNow,
+            Obra = dto.Obra,
+            Fields = dto.Answers.Select(a => new FormResponseField
+            {
+                FormFieldId = a.FormFieldId,
+                Value = a.Vaule,
+                FormFieldOptionId = a.FormFieldOptionId
+            }).ToList()
+        };
+        
+        _db.FormResponses.Add(response);
+        await _db.SaveChangesAsync();
+        return Ok(new {id = response.Id});
+    }
 }

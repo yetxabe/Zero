@@ -21,38 +21,50 @@ public class AppDbContext : IdentityDbContext<AppUser>
     public DbSet<FormSection> FormSections { get; set; }
     
     public DbSet<FormResponse> FormResponses { get; set; }
-    public DbSet<FormResponseItem> FormResponseItems { get; set; }
-    public DbSet<FormResponseItemOption> FormResponseItemOptions { get; set; }
+    public DbSet<FormResponseField> FormResponseItems { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<FormResponse>()
-            .HasOne(r => r.Form)
-            .WithMany()
-            .HasForeignKey(r => r.FormId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<FormResponse>(entity =>
+        {
+            entity.HasKey(fr => fr.Id);
+
+            // EF ya genera GUID automáticamente si está por defecto, pero lo explicitamos
+            entity.Property(fr => fr.Id)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(fr => fr.CreatedBy)
+                .IsRequired()
+                .HasMaxLength(256);
+
+            entity.Property(fr => fr.Obra)
+                .HasMaxLength(10);
+
+            entity.HasOne(fr => fr.Form)
+                .WithMany() // si quieres navegar desde Form a Responses, crea ICollection<FormResponse> en Form
+                .HasForeignKey(fr => fr.FormId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
         
-        builder.Entity<FormResponseItem>()
-            .HasOne(r => r.FormResponse)
-            .WithMany(r => r.Items)
-            .HasForeignKey(r => r.FormResponseId)
-            .OnDelete(DeleteBehavior.Cascade);
-        builder.Entity<FormResponseItem>()
-            .HasOne(r => r.FormField)
-            .WithMany()
-            .HasForeignKey(r => r.FormFieldId)
-            .OnDelete(DeleteBehavior.Restrict);
-        
-        builder.Entity<FormResponseItemOption>()
-            .HasOne(o => o.FormResponseItem)
-            .WithMany(i => i.selectedOptions)
-            .HasForeignKey(o => o.FormResponseItemId)
-            .OnDelete(DeleteBehavior.Cascade);
-        builder.Entity<FormResponseItemOption>()
-            .HasOne(o => o.FormFieldOption)
-            .WithMany() // no necesitas navegación inversa
-            .HasForeignKey(o => o.FormFieldOptionId)
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<FormResponseField>(entity =>
+        {
+            entity.HasKey(frf => frf.Id);
+
+            entity.HasOne(frf => frf.FormResponse)
+                .WithMany(fr => fr.Fields)
+                .HasForeignKey(frf => frf.FormResponseId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(frf => frf.FormField)
+                .WithMany() // si quieres navegar desde FormField, añade ICollection<FormResponseField>
+                .HasForeignKey(frf => frf.FormFieldId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(frf => frf.FormFieldOption)
+                .WithMany()
+                .HasForeignKey(frf => frf.FormFieldOptionId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
         
         base.OnModelCreating(builder);
 
@@ -76,8 +88,6 @@ public class AppDbContext : IdentityDbContext<AppUser>
         builder.Entity<FormFieldType>().ToTable("FieldTypes", schema);
         builder.Entity<FormSection>().ToTable("Sections", schema);
         builder.Entity<FormResponse>().ToTable("Responses", schema);
-        builder.Entity<FormResponseItem>().ToTable("ResponseItems", schema);
-        builder.Entity<FormResponseItemOption>().ToTable("ResponseItemOptions", schema);
-        
+        builder.Entity<FormResponseField>().ToTable("ResponseItems", schema);
     }
 }
