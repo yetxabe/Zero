@@ -310,7 +310,7 @@ public class FormController : ControllerBase
             Fields = dto.Answers.Select(a => new FormResponseField
             {
                 FormFieldId = a.FormFieldId,
-                Value = a.Vaule,
+                Value = a.Value,
                 FormFieldOptionId = a.FormFieldOptionId
             }).ToList()
         };
