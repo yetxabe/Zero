@@ -11,6 +11,7 @@ const NAV_ITEMS = [
         roles: ['Admin'],
         children: [
             { label: 'Listar usuarios', to: '/admin/users' },
+            { label: 'Listar formularios', to: '/admin/forms' },
             { label: 'Añadir roles', to: '/admin/roles/new' },
             { label: 'Asignar roles', to: '/admin/roles/assign' },
         ],
@@ -43,7 +44,7 @@ export default function TopNav(){
                 <div className="h-14 grid grid-cols-[auto_1fr_auto] items-center gap-3">
                     {/* Logo izq */}
                     <Link to="/" className="inline-flex items-center gap-2">
-                        <img src="/logo.png" alt="Logo" className="h-7 w-auto drop-shadow-sm" />
+                        <img src="/img/LogoGrupoMoyuaTopNav.png" alt="Logo" className="h-10 w-auto drop-shadow-sm" />
                     </Link>
 
                     {/* Menú centrado */}
